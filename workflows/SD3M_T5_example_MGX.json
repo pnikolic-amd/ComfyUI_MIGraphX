@@ -1,8 +1,8 @@
 {
   "id": "2623e784-2b34-41b1-9834-0a78bff58a55",
   "revision": 0,
-  "last_node_id": 40,
-  "last_link_id": 99,
+  "last_node_id": 41,
+  "last_link_id": 102,
   "nodes": [
     {
       "id": 6,
@@ -101,7 +101,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 99
+          "link": 102
         },
         {
           "name": "positive",
@@ -133,7 +133,7 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        797901144624733,
+        276482708212582,
         "randomize",
         100,
         15,
@@ -204,20 +204,19 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "ComfyUI",
-        ""
+        "ComfyUI"
       ]
     },
     {
-      "id": 40,
-      "type": "CompileSD3MIGraphX",
+      "id": 41,
+      "type": "CompileDiffusersMIGraphX",
       "pos": [
-        -195.02877807617188,
-        -54.936248779296875
+        -157.87200927734375,
+        -141.33016967773438
       ],
       "size": [
-        365.4000244140625,
-        178
+        441,
+        202
       ],
       "flags": {},
       "order": 2,
@@ -226,28 +225,28 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 96
+          "link": 101
         }
       ],
       "outputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "slot_index": 0,
           "links": [
-            99
+            102
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "CompileSD3MIGraphX"
+        "Node name for S&R": "CompileDiffusersMIGraphX"
       },
       "widgets_values": [
         false,
-        1,
-        1024,
-        1024,
-        77,
+        "sd3",
+        2,
+        512,
+        512,
+        154,
         "fp16"
       ]
     },
@@ -280,8 +279,8 @@
         "Node name for S&R": "EmptyLatentImage"
       },
       "widgets_values": [
-        1024,
-        1024,
+        512,
+        512,
         1
       ]
     },
@@ -306,7 +305,7 @@
           "type": "MODEL",
           "slot_index": 0,
           "links": [
-            96
+            101
           ]
         },
         {
@@ -331,7 +330,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "sd3_medium_incl_clips.safetensors"
+        "sd3_medium_incl_clips_t5xxlfp8.safetensors"
       ]
     }
   ],
@@ -401,16 +400,16 @@
       "VAE"
     ],
     [
-      96,
+      101,
       4,
       0,
-      40,
+      41,
       0,
       "MODEL"
     ],
     [
-      99,
-      40,
+      102,
+      41,
       0,
       3,
       0,
@@ -421,12 +420,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.618303341539098,
+      "scale": 0.6209213230591559,
       "offset": [
-        625.09866462067,
-        100.13524318260929
+        681.6099038087597,
+        429.9335645380849
       ]
-    }
+    },
+    "frontendVersion": "1.16.9"
   },
   "version": 0.4
 }

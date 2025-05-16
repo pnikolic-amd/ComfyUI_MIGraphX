@@ -2,7 +2,7 @@
   "id": "2623e784-2b34-41b1-9834-0a78bff58a55",
   "revision": 0,
   "last_node_id": 40,
-  "last_link_id": 99,
+  "last_link_id": 100,
   "nodes": [
     {
       "id": 6,
@@ -16,7 +16,7 @@
         164.31304931640625
       ],
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [
         {
@@ -54,7 +54,7 @@
         46
       ],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -95,13 +95,13 @@
         262
       ],
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 99
+          "link": 100
         },
         {
           "name": "positive",
@@ -133,7 +133,7 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        880917001312003,
+        1062064402659830,
         "randomize",
         100,
         15,
@@ -154,7 +154,7 @@
         180.6060791015625
       ],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -192,7 +192,7 @@
         514.9927978515625
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -204,51 +204,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "ComfyUI",
-        ""
-      ]
-    },
-    {
-      "id": 40,
-      "type": "CompileSD3MIGraphX",
-      "pos": [
-        -195.02877807617188,
-        -54.936248779296875
-      ],
-      "size": [
-        365.4000244140625,
-        178
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 96
-        }
-      ],
-      "outputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "slot_index": 0,
-          "links": [
-            99
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CompileSD3MIGraphX"
-      },
-      "widgets_values": [
-        false,
-        1,
-        512,
-        512,
-        77,
-        "fp16"
+        "ComfyUI"
       ]
     },
     {
@@ -280,8 +236,8 @@
         "Node name for S&R": "EmptyLatentImage"
       },
       "widgets_values": [
-        512,
-        512,
+        1024,
+        1024,
         1
       ]
     },
@@ -306,7 +262,7 @@
           "type": "MODEL",
           "slot_index": 0,
           "links": [
-            96
+            100
           ]
         },
         {
@@ -401,16 +357,8 @@
       "VAE"
     ],
     [
-      96,
+      100,
       4,
-      0,
-      40,
-      0,
-      "MODEL"
-    ],
-    [
-      99,
-      40,
       0,
       3,
       0,
@@ -421,12 +369,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.618303341539098,
+      "scale": 0.6209213230591559,
       "offset": [
-        625.09866462067,
-        100.13524318260929
+        681.6099038087597,
+        429.9335645380849
       ]
-    }
+    },
+    "frontendVersion": "1.16.9"
   },
   "version": 0.4
 }

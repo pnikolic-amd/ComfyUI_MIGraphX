@@ -8,7 +8,8 @@ import comfy.model_base
 import migraphx as mgx
 
 
-DATA_TYPES = {"fp16": torch.float16, "int8": torch.int8, "float32": torch.float32}
+DATA_TYPES = {"fp16": torch.float16, "int8": torch.int8, "fp32": torch.float32,
+              "bfp16": torch.bfloat16}
 
 _MGX_TO_TORCH_DTYPE_DICT = {
     "bool_type": torch.bool,
@@ -96,46 +97,103 @@ def create_dir(save_dir_path: Union[str, os.PathLike]) -> Union[str, os.PathLike
 
 def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike], 
                            model: comfy.model_patcher.ModelPatcher,
-                           input_shapes: Dict,
-                           dtype: Type):
+                           batch_size: int, 
+                           height: int, 
+                           width: int, 
+                           context_len: int,
+                           dtype: Type) -> Dict:
     onnx_file_path = os.path.join(onnx_tmp_dir, "model.onnx")
 
     comfy.model_management.unload_all_models()
     comfy.model_management.load_models_gpu([model], force_patch_weights=True, force_full_load=True)
     transformer = model.model.diffusion_model
 
-    inputs = {}
-    input_names = []
-    output_names = ["h"]
-    for name in input_shapes:
-        input_names.append(name)
-        inputs[name] = torch.zeros(
-                input_shapes[name],
-                device=comfy.model_management.get_torch_device(),
-                dtype=dtype)
-        
-    dynamic_axes = {
-                "x": {0: "batch", 1: "num_channels", 2: "height", 3: "width"},
-                "timesteps": {0: "batch"},
-                "context": {0: "batch", 1: "num_embeds"},
-                "y": {0: "batch"},
-                "h": {0: "batch", 1: "num_channels", 2: "height", 3: "width"},
+    context_dim = model.model.model_config.unet_config.get("context_dim", None)
+    y_dim = model.model.adm_channels
+    extra_input = {}
+    dtype = torch.float16
+
+    if isinstance(model.model, comfy.model_base.SD3):
+        context_embedder_config = model.model.model_config.unet_config.get("context_embedder_config", None)
+        if context_embedder_config is not None:
+            context_dim = context_embedder_config.get("params", {}).get("in_features", None)
+    elif isinstance(model.model, comfy.model_base.Flux):
+        context_dim = model.model.model_config.unet_config.get("context_in_dim", None)
+        y_dim = model.model.model_config.unet_config.get("vec_in_dim", None)
+        extra_input = {"guidance": ()}
+        dtype = torch.bfloat16
+
+    if context_dim is not None:
+        input_names = ["x", "timesteps", "context"]
+        output_names = ["h"]
+        dynamic_axes = {
+            "x": {0: "batch", 2: "height", 3: "width"},
+            "timesteps": {0: "batch"},
+            "context": {0: "batch", 1: "num_embeds"},
+            }     
+        transformer_options = model.model_options['transformer_options'].copy()
+
+        class UNET(torch.nn.Module):
+            def forward(self, x, timesteps, context, *args):
+                extras = input_names[3:]
+                extra_args = {}
+                for i in range(len(extras)):
+                    extra_args[extras[i]] = args[i]
+                return self.unet(x, timesteps, context, transformer_options=self.transformer_options, **extra_args)
+
+        _unet = UNET()
+        _unet.unet = transformer
+        _unet.transformer_options = transformer_options
+        transformer = _unet
+
+        input_channels = model.model.model_config.unet_config.get("in_channels", 4)
+
+        inputs_shapes = {
+                "x": [batch_size, input_channels, height // 8, width // 8],
+                "timesteps": [batch_size],
+                "context": [batch_size, context_len, context_dim],
             }
+                
+        if y_dim > 0:
+            input_names.append("y")
+            dynamic_axes["y"] = {0: "batch"}
+            inputs_shapes["y"] = [batch_size, y_dim]
+
+        for k in extra_input:
+            input_names.append(k)
+            dynamic_axes[k] = {0: "batch"}
+            inputs_shapes[k] = [batch_size]
+
+        inputs = ()
+        for name in inputs_shapes:
+            inputs += (
+                torch.zeros(
+                    inputs_shapes[name],
+                    device=comfy.model_management.get_torch_device(),
+                    dtype=dtype,
+                ),
+            )
+    else:
+        print("ERROR: model not supported.")
+        return ()
+
 
     print("Export model to ONNX.")
     torch.onnx.export(
         transformer,
-        (inputs,),
+        inputs,
         onnx_file_path,
         verbose=False,
         input_names=input_names,
         output_names=output_names,
-        dynamic_axes=dynamic_axes
+        opset_version=17,
+        dynamic_axes=dynamic_axes,
     )
 
     comfy.model_management.unload_all_models()
     comfy.model_management.soft_empty_cache()
 
+    return inputs_shapes
 
 def convert_model_with_mgx(onnx_tmp_dir: Union[str, os.PathLike], 
                             mxr_file_path: Union[str, os.PathLike], 
@@ -164,16 +222,18 @@ def load_from_mxr(mxr_file_path: Union[str, os.PathLike]):
     return model
 
 def load_MGX_transformer_model(model: comfy.model_base.BaseModel, force_compile: bool, mxr_file_name: str,
-                               input_shapes: Dict, data_type: str) -> MgxTransformer:
+                                batch_size: int, height: int, width: int, context_len: int, data_type: str) -> MgxTransformer:
     transformer_mgx = None
     mxr_file_path = create_path(f"mgx_files/{mxr_file_name}")
     if force_compile or not os.path.isfile(mxr_file_path):
         create_dir(create_path("mgx_files"))
         onnx_tmp_dir = create_dir(create_path("mgx_files/tmp"))
 
-        convert_model_to_ONNX(onnx_tmp_dir, model, input_shapes, DATA_TYPES[data_type])
+        input_shapes = convert_model_to_ONNX(onnx_tmp_dir, model, batch_size, height, width, context_len, 
+                                             DATA_TYPES[data_type])
         comfy.model_management.unload_all_models()
         comfy.model_management.soft_empty_cache()
+
         transformer_mgx = convert_model_with_mgx(onnx_tmp_dir, mxr_file_path, input_shapes)
     else:
         transformer_mgx = load_from_mxr(mxr_file_path)

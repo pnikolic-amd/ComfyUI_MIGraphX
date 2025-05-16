@@ -4,7 +4,8 @@ This node enables better performance for Stable Diffusion models, by leveraging 
 
 Supports:
 
-* Stable Diffusion 3.0
+* Stable Diffusion 3.0 medium ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-3-medium))
+* Stable Diffusion 3.5 medium ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium))
 * Other models to be supported...
 
 ## Installing
@@ -19,10 +20,12 @@ sudo apt install migraphx
 ```
 
 #### Install node
+To run this node you need to install [ComfyUI](https://github.com/comfyanonymous/ComfyUI). 
 To manually install clone this repo to ComfyUI/custom_nodes folder:
 ```bash
-cd custom_nodes
+cd ComfyUI/custom_nodes
 git clone https://github.com/pnikolic-amd/ComfyUI_MIGraphX.git
+cd ComfyUI_MIGraphX
 pip install -r requirements.txt
 #for best performance
 export MIGRAPHX_MLIR_USE_SPECIFIC_OPS="attention"
@@ -32,7 +35,7 @@ export MIGRAPHX_MLIR_USE_SPECIFIC_OPS="attention"
 You can find different workflows in the [workflows](./workflows/) directory. They can be loaded in ComfyUI.
 
 #### Create workflow with MIGraphX support
-To add MIGraphX node go to toolbar/node library/advanced/migraphx and select "Compile SD3 model on migraphx" node. Connect input model to "Load Checkpoint" node and connect output model to "KSampler" or some other node. Params:
+To add MIGraphX node go to toolbar/node library/advanced/migraphx and select "Compile diffusion model on migraphx" node. Connect input model to "Load Checkpoint" node and connect output model to "KSampler" or some other node. Params:
 * batch_size, height, width - set same as in Latent image node (testd with 512x512 and 1024x1024).
 * context_len - 77 if t5 is not used, 154 if t5 is used.
 * data_type - data type that models uses (fp16 for model in example).

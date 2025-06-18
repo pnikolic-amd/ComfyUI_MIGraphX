@@ -163,7 +163,14 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
             input_names.append(k)
             dynamic_axes[k] = {0: "batch"}
             inputs_shapes[k] = [batch_size]
-
+            
+        inputs_shapes = {
+            "x": [2, 16, 128, 128],
+            "timesteps": [2],
+            "context": [2, 77, 4096],
+            "y": [2, 2048]
+        }
+            
         inputs = ()
         for name in inputs_shapes:
             inputs += (
@@ -199,9 +206,37 @@ def convert_model_with_mgx(onnx_tmp_dir: Union[str, os.PathLike],
                             mxr_file_path: Union[str, os.PathLike], 
                             input_shapes: Dict):
     onnx_file = os.path.join(onnx_tmp_dir, "model.onnx")
-    
+        
     print("Load model from ONNX.")
-    model = mgx.parse_onnx(onnx_file, map_input_dims=input_shapes) 
+    map_input_dims = {
+        "x": [2, 16, 128, 128],
+        "timesteps": [2],
+        "context": [2, 77, 4096],
+        "y": [2, 2048]
+    }
+    
+    map_dyn_input_dims = {
+        "x": [
+            mgx.shape.dynamic_dimension(2, 2), 
+            mgx.shape.dynamic_dimension(16, 16), 
+            mgx.shape.dynamic_dimension(64, 128, {64, 96, 128}), 
+            mgx.shape.dynamic_dimension(64, 128, {64, 96, 128}),
+            ],
+        "timesteps": [
+            mgx.shape.dynamic_dimension(2, 2)
+            ],
+        "context": [
+            mgx.shape.dynamic_dimension(2, 2), 
+            mgx.shape.dynamic_dimension(77, 77), 
+            mgx.shape.dynamic_dimension(4096, 4096)
+            ],
+        "y": [
+            mgx.shape.dynamic_dimension(2, 2), 
+            mgx.shape.dynamic_dimension(2048, 2048)
+            ]
+    }
+    
+    model = mgx.parse_onnx(onnx_file, map_dyn_input_dims=map_dyn_input_dims) 
 
     print("Compile model with mgx.")
     model.compile(mgx.get_target("gpu"),

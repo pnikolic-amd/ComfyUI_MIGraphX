@@ -4,8 +4,11 @@ This node enables better performance for Stable Diffusion models, by leveraging 
 
 Supports:
 
+* Stable Diffusion 1.5 ([huggingface model](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))
+* Stable Diffusion 2.1 ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-2-1))
 * Stable Diffusion 3.0 medium ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-3-medium))
 * Stable Diffusion 3.5 medium ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium))
+* SDXL ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0)), ([huggingface model](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0))
 * Other models to be supported...
 
 ## Installing

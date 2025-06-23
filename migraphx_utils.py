@@ -100,7 +100,7 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
                            batch_size: int, 
                            height: int, 
                            width: int, 
-                           context_len: int,
+                           context: bool,
                            dtype: Type) -> Dict:
     onnx_file_path = os.path.join(onnx_tmp_dir, "model.onnx")
 
@@ -109,6 +109,7 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
     transformer = model.model.diffusion_model
 
     context_dim = model.model.model_config.unet_config.get("context_dim", None)
+    context_len = 77
     y_dim = model.model.adm_channels
     extra_input = {}
     dtype = torch.float16
@@ -117,11 +118,8 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
         context_embedder_config = model.model.model_config.unet_config.get("context_embedder_config", None)
         if context_embedder_config is not None:
             context_dim = context_embedder_config.get("params", {}).get("in_features", None)
-    elif isinstance(model.model, comfy.model_base.Flux):
-        context_dim = model.model.model_config.unet_config.get("context_in_dim", None)
-        y_dim = model.model.model_config.unet_config.get("vec_in_dim", None)
-        extra_input = {"guidance": ()}
-        dtype = torch.bfloat16
+            if context:
+               context_len = 154 
 
     if context_dim is not None:
         input_names = ["x", "timesteps", "context"]
@@ -222,14 +220,14 @@ def load_from_mxr(mxr_file_path: Union[str, os.PathLike]):
     return model
 
 def load_MGX_transformer_model(model: comfy.model_base.BaseModel, force_compile: bool, mxr_file_name: str,
-                                batch_size: int, height: int, width: int, context_len: int, data_type: str) -> MgxTransformer:
+                                batch_size: int, height: int, width: int, context: bool, data_type: str) -> MgxTransformer:
     transformer_mgx = None
     mxr_file_path = create_path(f"mgx_files/{mxr_file_name}")
     if force_compile or not os.path.isfile(mxr_file_path):
         create_dir(create_path("mgx_files"))
         onnx_tmp_dir = create_dir(create_path("mgx_files/tmp"))
 
-        input_shapes = convert_model_to_ONNX(onnx_tmp_dir, model, batch_size, height, width, context_len, 
+        input_shapes = convert_model_to_ONNX(onnx_tmp_dir, model, batch_size, height, width, context, 
                                              DATA_TYPES[data_type])
         comfy.model_management.unload_all_models()
         comfy.model_management.soft_empty_cache()

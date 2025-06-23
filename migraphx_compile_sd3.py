@@ -14,7 +14,7 @@ class CompileDiffusersMIGraphX:
                     "default": False, 
                     "tooltip": "When set on false, it will try to load model from mxr file, if file exists.",},),
                 #"model_type": (["sd3", "sd3.5", "flux_dev", "flux_schnell"], ),
-                "model_type": (["sd3", "sd3.5"], ),
+                "model_type": (["sd1.5", "sd3", "sd3.5"], ),
                 "batch_size": ("INT", {
                     "default": 1, "min": 1, "max": 4, "step": 1,
                     "tooltip": "Based on value for latent.",
@@ -44,18 +44,22 @@ class CompileDiffusersMIGraphX:
     CATEGORY = "advanced/migraphx"
 
     def compile_on_MIGraphX(self, model, force_compile, model_type, batch_size, height, width, context_len, data_type):    
-        if model_type == "sd3" or  model_type == "sd3.5":
+        if model_type == "sd1.5":
+            conf = comfy.supported_models.SD15({})
+            conf.unet_config["disable_unet_model_creation"] = True
+            comfy_model = comfy.model_base.BaseModel(conf)
+        elif model_type == "sd3" or  model_type == "sd3.5":
             conf = comfy.supported_models.SD3({})
+            conf.unet_config["disable_unet_model_creation"] = True
+            comfy_model = conf.get_model({}) 
         #elif model_type == "flux_dev":
-            #conf = comfy.supported_models.Flux({})
+        #    conf = comfy.supported_models.Flux({})
         #elif model_type == "flux_schnell":
-            #conf = comfy.supported_models.FluxSchnell({})  
+        #    conf = comfy.supported_models.FluxSchnell({})  
         else:
             print("ERROR: model not supported.")
             return ()  
-        
-        conf.unet_config["disable_unet_model_creation"] = True
-        comfy_model = conf.get_model({}) 
+
         mxr_file_name = f"{model_type}_{batch_size}_{width}_{height}_{context_len}_{data_type}.mxr"       
 
         comfy_model.diffusion_model = load_MGX_transformer_model(model, force_compile, mxr_file_name, 

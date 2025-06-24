@@ -73,7 +73,7 @@ class CompileDiffusersMIGraphX:
 
         mxr_file_name = f"{model_type}_{batch_size}_{width}_{height}_{data_type}.mxr"
         
-        if model_type in ["sd1.x", "sd2.x-768v", "sd3.x"]:
+        if model_type in ["sd1.x", "sd2.x-768v", "sd3.x", "sdxl_base", "sdxl_refiner"]:
             batch_size = batch_size * 2
 
         comfy_model.diffusion_model = load_MGX_transformer_model(model, force_compile, mxr_file_name, 

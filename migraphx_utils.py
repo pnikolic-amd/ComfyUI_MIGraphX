@@ -112,7 +112,7 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
     context_len = 77
     y_dim = model.model.adm_channels
     extra_input = {}
-    dtype = torch.float16
+    #dtype = torch.float16
 
     if isinstance(model.model, comfy.model_base.SD3):
         context_embedder_config = model.model.model_config.unet_config.get("context_embedder_config", None)
@@ -120,6 +120,11 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
             context_dim = context_embedder_config.get("params", {}).get("in_features", None)
             if context:
                context_len = 154 
+    elif isinstance(model.model, comfy.model_base.Flux):
+        context_dim = model.model.model_config.unet_config.get("context_in_dim", None)
+        context_len = 256
+        y_dim = model.model.model_config.unet_config.get("vec_in_dim", None)
+        extra_input = {"guidance": ()}
 
     if context_dim is not None:
         input_names = ["x", "timesteps", "context"]

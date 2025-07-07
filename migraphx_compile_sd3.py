@@ -13,7 +13,7 @@ class CompileDiffusersMIGraphX:
                 "force_compile": ("BOOLEAN", {
                     "default": False, 
                     "tooltip": "When set on false, it will try to load model from mxr file, if file exists.",},),
-                "model_type": (["sd1.x", "sd2.x-768v", "sd3.x", "sdxl_base", "sdxl_refiner"], ),
+                "model_type": (["sd1.x", "sd2.x-768v", "sd3.x", "sdxl_base", "sdxl_refiner", "flux_dev", "flux_schnell"], ),
                 "batch_size": ("INT", {
                     "default": 1, "min": 1, "max": 32, "step": 1,
                     "tooltip": "Based on value for latent.",
@@ -67,6 +67,14 @@ class CompileDiffusersMIGraphX:
                 {"adm_in_channels": 2560})
             conf.unet_config["disable_unet_model_creation"] = True
             comfy_model = comfy.model_base.SDXLRefiner(conf) 
+        elif model_type == "flux_dev":
+            conf = comfy.supported_models.Flux({})
+            conf.unet_config["disable_unet_model_creation"] = True
+            comfy_model = conf.get_model({})
+        elif model_type == "flux_schnell":
+            conf = comfy.supported_models.FluxSchnell({}) 
+            conf.unet_config["disable_unet_model_creation"] = True
+            comfy_model = conf.get_model({})
         else:
             print("ERROR: model not supported.")
             return ()  

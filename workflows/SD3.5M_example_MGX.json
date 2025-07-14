@@ -383,7 +383,7 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        1023494028314552,
+        47182347687851,
         "randomize",
         40,
         5.5,
@@ -468,49 +468,6 @@
       ]
     },
     {
-      "id": 302,
-      "type": "CompileDiffusersMIGraphX",
-      "pos": [
-        -983.741943359375,
-        -835.7824096679688
-      ],
-      "size": [
-        441,
-        202
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 608
-        }
-      ],
-      "outputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "links": [
-            609
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CompileDiffusersMIGraphX"
-      },
-      "widgets_values": [
-        false,
-        "sd3.5",
-        2,
-        1280,
-        768,
-        77,
-        "fp16"
-      ]
-    },
-    {
       "id": 135,
       "type": "EmptySD3LatentImage",
       "pos": [
@@ -587,6 +544,49 @@
       },
       "widgets_values": [
         "sd3.5_medium.safetensors"
+      ]
+    },
+    {
+      "id": 302,
+      "type": "CompileDiffusersMIGraphX",
+      "pos": [
+        -983.741943359375,
+        -835.7824096679688
+      ],
+      "size": [
+        441,
+        202
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 608
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            609
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CompileDiffusersMIGraphX"
+      },
+      "widgets_values": [
+        false,
+        "sd3.x",
+        1,
+        1280,
+        768,
+        "fp16",
+        false
       ]
     }
   ],
@@ -724,10 +724,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6209213230591559,
+      "scale": 0.7127579162301608,
       "offset": [
-        1829.5817070424002,
-        1035.4853368253002
+        1795.8576132017874,
+        1009.0297415759883
       ]
     },
     "frontendVersion": "1.16.9"

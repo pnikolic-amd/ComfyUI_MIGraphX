@@ -208,49 +208,6 @@
       ]
     },
     {
-      "id": 41,
-      "type": "CompileDiffusersMIGraphX",
-      "pos": [
-        -157.87200927734375,
-        -141.33016967773438
-      ],
-      "size": [
-        441,
-        202
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 101
-        }
-      ],
-      "outputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "links": [
-            102
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CompileDiffusersMIGraphX"
-      },
-      "widgets_values": [
-        false,
-        "sd3",
-        2,
-        512,
-        512,
-        154,
-        "fp16"
-      ]
-    },
-    {
       "id": 5,
       "type": "EmptyLatentImage",
       "pos": [
@@ -331,6 +288,49 @@
       },
       "widgets_values": [
         "sd3_medium_incl_clips_t5xxlfp8.safetensors"
+      ]
+    },
+    {
+      "id": 41,
+      "type": "CompileDiffusersMIGraphX",
+      "pos": [
+        -157.87200927734375,
+        -141.33016967773438
+      ],
+      "size": [
+        441,
+        202
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 101
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            102
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CompileDiffusersMIGraphX"
+      },
+      "widgets_values": [
+        false,
+        "sd3.x",
+        1,
+        512,
+        512,
+        "fp16",
+        "fp16"
       ]
     }
   ],
@@ -420,10 +420,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6209213230591559,
+      "scale": 0.7127579162301608,
       "offset": [
-        681.6099038087597,
-        429.9335645380849
+        705.2582518387388,
+        391.7093871285483
       ]
     },
     "frontendVersion": "1.16.9"

@@ -1,0 +1,15 @@
+[project]
+name = "migraphx"
+description = "This node enables better performance for Stable Diffusion models, by leveraging AMD MIGraphX, on Navi3 and Navi4 GPUs."
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = ["onnx!=1.16.2"]
+
+[project.urls]
+Repository = "https://github.com/pnikolic-amd/ComfyUI_MIGraphX"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_MIGraphX"
+Icon = ""

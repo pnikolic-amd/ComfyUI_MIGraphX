@@ -177,34 +177,17 @@ def convert_model_to_ONNX(onnx_tmp_dir: Union[str, os.PathLike],
 
 
     print("Export model to ONNX.")
-    
-    common_export_args = {
-        "model": transformer,
-        "args": inputs,
-        "f": onnx_file_path,
-        "verbose": False,
-        "input_names": input_names,
-        "output_names": output_names,
-    }
-    
-    # Try dynamo exporter first, fallback to legacy if not available
-    try:
-        print("Attempting ONNX export with dynamo exporter...")
-        transformer.eval()
-        torch.onnx.export(
-            **common_export_args,
-            opset_version=18,
-            dynamo=True,
-        )
-        print("Successfully exported the model.")
-    except (TypeError, RuntimeError, AttributeError) as e:
-        print(f"Dynamo exporter not available ({type(e).__name__}), falling back to legacy exporter...")
-        torch.onnx.export(
-            **common_export_args,
-            opset_version=17,
-            dynamic_axes=dynamic_axes,
-        )
-        print("Successfully exported the model.")
+    torch.onnx.export(
+        transformer,
+        inputs,
+        onnx_file_path,
+        verbose=False,
+        input_names=input_names,
+        output_names=output_names,
+        opset_version=17,
+        dynamic_axes=dynamic_axes,
+        dynamo=False,
+    )
 
     comfy.model_management.unload_all_models()
     comfy.model_management.soft_empty_cache()

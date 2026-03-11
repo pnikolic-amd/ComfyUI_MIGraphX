@@ -1,5 +1,4 @@
 import os
-import sys
 import torch
 from typing import Union, Dict, Type
 import comfy.model_patcher
@@ -86,8 +85,8 @@ class MgxTransformer:
         torch.cuda.synchronize()
 
 def create_path(path: Union[str, os.PathLike]) -> Union[str, os.PathLike]:
-    root_path = os.path.dirname(os.path.abspath(sys.argv[0]))
-    return os.path.join(root_path, path)        
+    import folder_paths
+    return os.path.join(folder_paths.base_path, path)
 
 def create_dir(save_dir_path: Union[str, os.PathLike]) -> Union[str, os.PathLike]:
     if not os.path.isdir(save_dir_path):
